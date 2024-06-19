@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 
-# Função para atualizar a imagem com o nível de água no copo
+# atualizar a imagem de acordo com a quantidade de erros
 def update_image():
     global errors
     if errors < len(images):
@@ -10,36 +10,39 @@ def update_image():
         image_label.config(image=img_tk)
         image_label.image = img_tk
 
-# Função para adivinhar a letra
+# processar o palpite de letra
 def guess_letter():
     global errors
-    letter = entry.get().lower()
+    letter = entry.get().lower() # transforma a letra em minuscula
     entry.delete(0, tk.END)
     
     if letter in word:
+         # se a letra esta na palavra, atualiza a exibição da palavra com todas as ocorrências da letra
         for idx, char in enumerate(word):
             if char == letter:
                 word_display[idx] = letter
         word_label.config(text=" ".join(word_display))
     else:
+        # se a letra nao tiver na palavra, coloca o erro na imagem
         errors += 1
         update_image()
-
+# Verifica se o jogador perdeu
     if errors == len(images):
         messagebox.showinfo("Forca", "Você perdeu!")
+        # Verifica se o jogador ganhou
     elif "_" not in word_display:
         messagebox.showinfo("Forca", "Você ganhou!")
 
-# Configuração inicial
+
 errors = 0
 word = "cachorro"
 word_display = ["_" for _ in word]
 
-# Configuração da janela
+
 root = tk.Tk()
 root.title("Jogo da Forca")
 
-# Caminhos completos das imagens
+# caminho das imagens de inicio e erro
 image_paths = [
     r"C:\Users\paulo\OneDrive\Desktop\jogo forca\erros\inicio.png",
     r"C:\Users\paulo\OneDrive\Desktop\jogo forca\erros\erro1.png",
@@ -50,30 +53,30 @@ image_paths = [
 ]
 
 
-# Carregar as imagens
+
 try:
     images = [ImageTk.PhotoImage(Image.open(path)) for path in image_paths]
 except IOError as e:
     messagebox.showerror("Erro", f"Erro ao carregar imagem: {e}")
-
+# Exibe mensagem de erro se houver problema ao carregar as imagens
 images = [ImageTk.PhotoImage(Image.open(path)) for path in image_paths]
 
-# Configuração da imagem inicial
+
 img_tk = images[0]
 image_label = tk.Label(root, image=img_tk)
 image_label.pack()
 
-# Configuração da palavra oculta
+
 word_label = tk.Label(root, text=" ".join(word_display), font=("Helvetica", 24))
 word_label.pack()
 
-# Entrada para adivinhar a letra
+# Cria uma entrada para o jogador inserir letras
 entry = tk.Entry(root)
 entry.pack()
 
-# Botão para enviar a letra
+# Botão para o jogador enviar uma letra
 guess_button = tk.Button(root, text="Adivinhar", command=guess_letter)
 guess_button.pack()
 
-# Iniciar o loop principal do tkinter
+
 root.mainloop()
